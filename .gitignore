@@ -1,0 +1,7 @@
+.env
+venv/
+data/chroma_store/
+__pycache__/
+*.pyc
+node_modules/
+frontend/web_app/node_modules/
