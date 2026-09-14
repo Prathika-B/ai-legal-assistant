@@ -186,7 +186,7 @@ export function Sidebar({
           </div>
           <div className="user-details">
             <span className="user-email">{userEmail || "User Account"}</span>
-            <span className="user-plan">Legal AI • Supabase Auth</span>
+            <span className="user-plan">AI Legal Assistant</span>
           </div>
           <button className="logout-btn" onClick={onLogout} title="Log out">
             <LogOut size={16} />

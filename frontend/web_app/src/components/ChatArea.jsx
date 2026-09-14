@@ -112,7 +112,7 @@ export function ChatArea({
               <div className="hero-icon">
                 <Scale size={34} />
               </div>
-              <h1 className="hero-title">How can I assist with Indian Law today?</h1>
+              <h1 className="hero-title">How can I assist you today?</h1>
               <p className="hero-subtitle">
                 Ask any legal question based on <strong>BNS 2023</strong>, <strong>BNSS 2023</strong>, <strong>BSA 2023</strong>, and Indian statutory laws. Get clear, educational legal explanations backed by verified statutory context.
               </p>
