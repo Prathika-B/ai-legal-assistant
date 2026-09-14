@@ -1,11 +1,16 @@
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
 from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import chromadb
-from sentence_transformers import SentenceTransformer
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -24,9 +29,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-client = chromadb.PersistentClient(path="data/chroma_store")
-collection = client.get_collection("legal_corpus")
+_embed_model = None
+_chroma_collection = None
+
+def get_embed_model():
+    global _embed_model
+    if _embed_model is None:
+        from sentence_transformers import SentenceTransformer
+        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embed_model
+
+def get_chroma_collection():
+    global _chroma_collection
+    if _chroma_collection is None:
+        import chromadb
+        client = chromadb.PersistentClient(path="data/chroma_store")
+        _chroma_collection = client.get_collection("legal_corpus")
+    return _chroma_collection
 
 llm = ChatGroq(
     model="openai/gpt-oss-120b",
@@ -168,15 +187,22 @@ def save_message(conversation_id: int, body: NewMessage, authorization: Optional
 # ---------------- Chat ----------------
 
 def retrieve(query, k=5):
-    query_embedding = embed_model.encode([query]).tolist()
-    results = collection.query(query_embeddings=query_embedding, n_results=k)
-    chunks = []
-    for i in range(len(results["ids"][0])):
-        chunks.append({
-            "act": results["metadatas"][0][i]["act"],
-            "text": results["documents"][0][i],
-        })
-    return chunks
+    try:
+        model = get_embed_model()
+        collection = get_chroma_collection()
+        query_embedding = model.encode([query]).tolist()
+        results = collection.query(query_embeddings=query_embedding, n_results=k)
+        chunks = []
+        if results and "ids" in results and results["ids"] and len(results["ids"][0]) > 0:
+            for i in range(len(results["ids"][0])):
+                chunks.append({
+                    "act": results["metadatas"][0][i]["act"],
+                    "text": results["documents"][0][i],
+                })
+        return chunks
+    except Exception as e:
+        print(f"Retrieval error/fallback: {e}")
+        return []
 
 
 def format_history(messages, max_turns=6):
