@@ -5,7 +5,6 @@ langchain-community==0.3.5
 langchain-groq==0.2.1
 langchain-openai==0.2.5
 supabase==2.9.1
-sentence-transformers==3.2.1
 chromadb==0.5.20
 pymupdf==1.24.13
 pytesseract==0.3.13
