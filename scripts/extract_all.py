@@ -19,7 +19,9 @@ ACTS = {
     "bsa.pdf": "bsa_raw.txt",
     "it_act.pdf": "it_act_raw.txt",
     "posh_act.pdf": "posh_act_raw.txt",
-    "domestic_violence_act.pdf": "domestic_violence_act_raw.txt",
+    "domestic_violence_act.pdf": "domestic_violence_act_raw.txt",    
+    "specific_relief_act_1963.pdf": "specific_relief_act_1963_raw.txt",
+    
 }
 def extract_pdf_text(pdf_path, output_path):
     doc = fitz.open(pdf_path)

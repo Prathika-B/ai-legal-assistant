@@ -18,6 +18,7 @@ FILES = {
     "it_act_raw.txt": "Information Technology Act, 2000",
     "posh_act_raw.txt": "Sexual Harassment of Women at Workplace Act, 2013",
     "domestic_violence_act_raw.txt": "Protection of Women from Domestic Violence Act, 2005",
+    "specific_relief_act_1963_raw.txt": "Specific Relief Act, 1963",
 }
 
 
